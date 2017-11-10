@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+{% block content %}
+    <div class="container">
+        <div class="row">
+            {% if products_in_cart %}
+                <div class="col-lg-8 col-lg-offset-2">
+                    <h3 class="text-center" style="margin: 30px">Produts in cart</h3>
+                            {{ request.session.cart.products }}
+                    <form class="form-horizontal" method="post">{% csrf_token %}
+                        <div class="form-group">
+                            <div class="col-lg-4">
+                                <label>Name:</label>
+                                <span class="form-error">{{ form.name.errors }}</span>
+                                <input type="text" name="{{ form.name.html_name }}" class="form-control"
+                                       value="{{ request.POST.name }}">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-lg-4">
+                                <label>Phone:</label>
+                                <span class="form-error">{{ form.phone.errors }}</span>
+                                <input type="text" name="{{ form.phone.html_name }}" class="form-control"
+                                       value="{{ request.POST.phone }}">
+                            </div>
+                        </div>
+                        <table class="table text-left">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Unit Price</th>
+                                    <th>Quantity</th>
+                                    <th>Subtotal</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for product_in_cart in products_in_cart %}
+                                    <tr>
+                                        <td>
+                                            {{ product_in_cart.product.name }}
+                                        </td>
+                                        <td>
+                                            <span class="product-price">
+                                                {{ product_in_cart.price_per_item }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <input value="{{ product_in_cart.nmb }}" type="number"
+                                                   class="product-in-cart-nmb" name="product_in_cart_{{ product_in_cart.id }}">
+                                        </td>
+                                        <td>
+                                            <span class="total-product-in-cart-amount">
+                                                {{ product_in_cart.total_price }}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        <div class="text-right">
+                            <b>Total cost: <span id="total_order_amount">{{ request.session.cart.total_amount }}</span> UAH</b>
+                        </div>
+                        <div class="text-right">
+                            <button type="Checkout" class="btn btn-primary btn-lg">
+                                Submit order
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            {% else %}
+                <h3 class="text-center">There is no products in your cart</h3>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}
